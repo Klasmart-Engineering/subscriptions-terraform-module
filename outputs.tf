@@ -17,6 +17,7 @@ output "db_master_username" {
 output "db_password" {
   description = "The randomly generated password for database"
   value       = random_password.db_password.result
+  sensitive = false
 }
 
 output "db_port" {

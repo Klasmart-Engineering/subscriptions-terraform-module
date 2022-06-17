@@ -35,4 +35,9 @@ locals {
   db_endpoint     = module.db_cluster.rds_cluster_endpoint
   db_port         = module.db_cluster.rds_cluster_port
   db_name         = module.db_cluster.rds_cluster_database_name
+
+  # Global EKS Variables
+  cluster_endpoint                      = local.dep_cluster.cluster_endpoint
+  cluster_id                            = local.dep_cluster.cluster_id
+  kubeconfig_certificate_authority_data = local.dep_cluster.kubeconfig_certificate_authority_data
 }

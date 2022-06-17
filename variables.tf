@@ -132,15 +132,6 @@ variable "monitoring_interval" {
 }
 
 # Kubernetes inputs
-variable "eks_oidc_provider_arn" {
-  description = "ARN of AWS EKS OIDC IAM provider (for IAM policies)"
-  type        = string
-}
-variable "eks_oidc_provider_id" {
-  description = "ID of AWS EKS OIDC IAM provider (for IAM policies)"
-  type        = string
-}
-
 variable "service_account_name" {
   description = "Subscriptions service account name in Kubernetes"
   type        = string
@@ -151,12 +142,6 @@ variable "namespace" {
   description = "The kubernetes namespace for the product offering"
   type        = string
   default     = "subscriptions"
-}
-
-# Logging inputs
-variable "logs_bucket_id" {
-  description = "ID of logs bucket"
-  type        = string
 }
 
 variable "aws_target_role_arn" {

@@ -1,4 +1,3 @@
-
 # database outputs
 output "db_endpoint" {
   description = "The RDS Cluster endpoint"

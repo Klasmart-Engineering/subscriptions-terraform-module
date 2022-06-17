@@ -12,3 +12,8 @@ data "tfe_outputs" "network" {
   organization = local.terraform_organization
   workspace    = "network-${local.project_region}-${local.project_environment}"
 }
+
+data "tfe_outputs" "cluster" {
+  organization = local.terraform_organization
+  workspace    = "cluster-${local.project_region}-${local.project_environment}"
+}

@@ -8,12 +8,12 @@ resource "aws_iam_role" "service_account" {
       {
         Effect : "Allow",
         Principal : {
-          "Federated" : var.eks_oidc_provider_arn
+          "Federated" : local.dep_cluster.eks_oidc_provider_arn
         },
         Action : "sts:AssumeRoleWithWebIdentity",
         Condition : {
           "StringEquals" : {
-            "${var.eks_oidc_provider_id}:sub" : "system:serviceaccount:${var.namespace}:${var.service_account_name}"
+            "${local.dep_cluster.eks_oidc_provider_id}:sub" : "system:serviceaccount:${var.namespace}:${var.service_account_name}"
           }
         }
       }

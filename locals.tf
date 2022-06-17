@@ -6,6 +6,7 @@ locals {
   dep_meta    = nonsensitive(data.tfe_outputs.meta.values)
   dep_account = nonsensitive(data.tfe_outputs.account.values)
   dep_network = nonsensitive(data.tfe_outputs.network.values)
+  dep_cluster = nonsensitive(data.tfe_outputs.cluster.values)
 
   region              = var.region
   project_environment = var.project_environment

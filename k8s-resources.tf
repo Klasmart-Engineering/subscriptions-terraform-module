@@ -17,3 +17,28 @@ resource "kubernetes_secret" "outputs" {
     kms_arn = module.kms.kms_key_arn
   }
 }
+
+resource "kubernetes_manifest" "db-istio-egress-service-entry" {
+  manifest = {
+    "apiVersion" = "networking.istio.io/v1beta1"
+    "kind"       = "ServiceEntry"
+    "metadata" = {
+      "name"      = "subscriptions-db"
+      "namespace" = "istio-system"
+    }
+    "spec" = {
+      "hosts" = [
+        module.db_cluster.rds_cluster_endpoint,
+      ]
+      "location" = "MESH_EXTERNAL"
+      "ports" = [
+        {
+          "name" = "postgresql",
+          "number" = 5432
+          "protocol" = "TCP"
+        }
+      ]
+      "resolution" = "DNS"
+    }
+  }
+}

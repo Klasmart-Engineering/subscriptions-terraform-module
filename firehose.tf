@@ -32,6 +32,9 @@ resource "aws_kinesis_firehose_delivery_stream" "subscriptions_stream" {
     buffer_size        = 64
     compression_format = "GZIP"
     kms_key_arn        = aws_kms_key.firehose.arn
+    dynamic_partitioning_configuration {
+      enabled = true
+    }
     cloudwatch_logging_options {
       enabled         = true
       log_group_name  = "${local.name_prefix}-subscriptions-delivery-stream"
@@ -52,19 +55,6 @@ resource "aws_kinesis_firehose_delivery_stream" "subscriptions_stream" {
       # New line delimiter processor example
       processors {
         type = "AppendDelimiterToRecord"
-      }
-
-      # JQ processor example
-      processors {
-        type = "MetadataExtraction"
-        parameters {
-          parameter_name  = "JsonParsingEngine"
-          parameter_value = "JQ-1.6"
-        }
-        parameters {
-          parameter_name  = "MetadataExtractionQuery"
-          parameter_value = "{customer_id:.customer_id}"
-        }
       }
     }
   }

@@ -41,5 +41,5 @@ resource "aws_s3_bucket_public_access_block" "athena" {
 resource "aws_s3_bucket_logging" "athena" {
   bucket        = aws_s3_bucket.athena.id
   target_bucket = local.logs_bucket_id
-  target_prefix = "S3/${local.name_prefix}-bucket"
+  target_prefix = "S3/${aws_s3_bucket.athena.id}"
 }

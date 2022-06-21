@@ -159,14 +159,14 @@ variable "aws_target_external_id" {
   type        = string
 }
 
-variable "subscriptions_firehose_s3_prefix" {
+variable "api_usage_firehose_s3_prefix" {
   description = "S3 prefix for data sent from firehose"
   type        = string
   default     = "!{partitionKeyFromQuery:SubscriptionId}/!{timestamp:yyyy}/!{timestamp:mm}/!{timestamp:dd}/"
 }
 
-variable "subscriptions_error_output_prefix" {
+variable "api_usage_error_output_prefix" {
   description = "S3 error prefix for data sent from firehose"
   type        = string
-  default     = "errors/!{firehose:error-output-type}/!{partitionKeyFromQuery:SubscriptionId}/!{timestamp:yyyy}/!{timestamp:mm}/!{timestamp:dd}/"
+  default     = "firehose/events/api-usage/errors/"
 }

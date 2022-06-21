@@ -29,8 +29,8 @@ resource "aws_kinesis_firehose_delivery_stream" "stream" {
     bucket_arn = aws_s3_bucket.firehose.arn
 
     # Example prefix using partitionKeyFromQuery, applicable to JQ processor
-    prefix              = var.subscriptions_firehose_s3_prefix
-    error_output_prefix = var.subscriptions_error_output_prefix
+    prefix              = var.api_usage_firehose_s3_prefix
+    error_output_prefix = var.api_usage_error_output_prefix
 
     # https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning.html
     buffer_size        = 5

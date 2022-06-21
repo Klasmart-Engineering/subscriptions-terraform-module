@@ -16,8 +16,12 @@ resource "aws_cloudwatch_log_stream" "subscriptions_log_group_stream" {
 }
 
 
-resource "aws_kinesis_firehose_delivery_stream" "subscriptions_stream" {
-  name        = "${local.name_prefix}-subscriptions-firehose-stream"
+# Common/core infrastructure
+# Firehose
+# Buckets for it
+# Database, if it's shared across services per environment
+resource "aws_kinesis_firehose_delivery_stream" "stream" {
+  name        = "${local.name_prefix}-api-usage"
   destination = "extended_s3"
 
   extended_s3_configuration {
@@ -29,15 +33,16 @@ resource "aws_kinesis_firehose_delivery_stream" "subscriptions_stream" {
     error_output_prefix = var.subscriptions_error_output_prefix
 
     # https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning.html
-    buffer_size        = 64
+    buffer_size        = 5
+    buffer_interval    = 600
     compression_format = "GZIP"
-    kms_key_arn        = aws_kms_key.firehose.arn
+    # kms_key_arn        = aws_kms_key.firehose.arn
     dynamic_partitioning_configuration {
       enabled = true
     }
     cloudwatch_logging_options {
       enabled         = true
-      log_group_name  = "${local.name_prefix}-subscriptions-delivery-stream"
+      log_group_name  = "${local.name_prefix}-api-usage-firehose-stream"
       log_stream_name = "ERROR_LOG"
     }
     processing_configuration {
@@ -51,24 +56,19 @@ resource "aws_kinesis_firehose_delivery_stream" "subscriptions_stream" {
           parameter_value = "JSON"
         }
       }
-
-      # New line delimiter processor example
-      processors {
-        type = "AppendDelimiterToRecord"
-      }
     }
   }
   tags = merge(
     local.tags,
     {
-      Name           = "${local.name_prefix}-subscriptions-firehose-stream"
+      Name           = "${local.name_prefix}-api-usage"
       RESOURCE_GROUP = "EventStream"
     }
   )
 }
 
-resource "aws_iam_policy" "subscriptions_s3_firehose_policy" {
-  name = "${local.name_prefix}-subscriptions-s3-firehose"
+resource "aws_iam_policy" "s3_firehose_policy" {
+  name = "${local.name_prefix}-api-usage-s3-firehose"
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -92,50 +92,50 @@ resource "aws_iam_policy" "subscriptions_s3_firehose_policy" {
   tags = merge(
     local.tags,
     {
-      Name           = "${local.name_prefix}-subscriptions-s3-firehose"
+      Name           = "${local.name_prefix}-api-usage-s3-firehose"
       RESOURCE_GROUP = "IAM"
     }
   )
 }
 
-resource "aws_iam_policy" "subscritpions_firehose_kms_policy" {
+# resource "aws_iam_policy" "firehose_kms_policy" {
 
-  name = "${local.name_prefix}-subscritpions-kms-access"
+#   name = "${local.name_prefix}-api-usage-kms-access"
 
-  policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "kms:Decrypt",
-          "kms:GenerateDataKey"
-        ],
-        "Resource" : aws_kms_key.firehose.arn,
-        "Condition" : {
-          "StringEquals" : {
-            "kms:ViaService" : "s3.${var.region}.amazonaws.com"
-          },
-          "StringLike" : {
-            "kms:EncryptionContext:aws:s3:arn" : "${aws_s3_bucket.firehose.arn}/*"
-          }
-        }
-      }
-    ]
-  })
+#   policy = jsonencode({
+#     "Version" : "2012-10-17",
+#     "Statement" : [
+#       {
+#         "Effect" : "Allow",
+#         "Action" : [
+#           "kms:Decrypt",
+#           "kms:GenerateDataKey"
+#         ],
+#         "Resource" : aws_kms_key.firehose.arn,
+#         "Condition" : {
+#           "StringEquals" : {
+#             "kms:ViaService" : "s3.${var.region}.amazonaws.com"
+#           },
+#           "StringLike" : {
+#             "kms:EncryptionContext:aws:s3:arn" : "${aws_s3_bucket.firehose.arn}/*"
+#           }
+#         }
+#       }
+#     ]
+#   })
 
-  tags = merge(
-    local.tags,
-    {
-      Name           = "${local.name_prefix}-firehose-kms-access"
-      RESOURCE_GROUP = "IAM"
-    }
-  )
-}
+#   tags = merge(
+#     local.tags,
+#     {
+#       Name           = "${local.name_prefix}-api-usage-kms-access"
+#       RESOURCE_GROUP = "IAM"
+#     }
+#   )
+# }
 
-resource "aws_iam_policy" "subscriptions_firehose_cloudwatch_policy" {
+resource "aws_iam_policy" "firehose_cloudwatch_policy" {
 
-  name = "${local.name_prefix}-subscriptions-cloudwatch-access"
+  name = "${local.name_prefix}-api-usage-cloudwatch-access"
 
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -145,7 +145,7 @@ resource "aws_iam_policy" "subscriptions_firehose_cloudwatch_policy" {
         "Action" : [
           "Logs:PutLogEvents",
         ],
-        "Resource" : "arn:aws:logs::log-group:${local.name_prefix}-subscriptions-delivery-stream:*"
+        "Resource" : "arn:aws:logs::log-group:${local.name_prefix}-api-usage-delivery-stream:*"
       }
     ]
   })
@@ -153,7 +153,7 @@ resource "aws_iam_policy" "subscriptions_firehose_cloudwatch_policy" {
   tags = merge(
     local.tags,
     {
-      Name           = "${local.name_prefix}-subscriptions-cloudwatch-access"
+      Name           = "${local.name_prefix}-api-usage-cloudwatch-access"
       RESOURCE_GROUP = "IAM"
     }
   )
@@ -187,15 +187,17 @@ EOF
   )
 }
 
-resource "aws_iam_role_policy_attachment" "subscriptions_s3_firehose" {
+resource "aws_iam_role_policy_attachment" "s3_firehose" {
   role       = aws_iam_role.firehose.name
-  policy_arn = aws_iam_policy.subscriptions_s3_firehose_policy.arn
+  policy_arn = aws_iam_policy.s3_firehose_policy.arn
 }
-resource "aws_iam_role_policy_attachment" "subscriptions_firehose_kms" {
+# resource "aws_iam_role_policy_attachment" "firehose_kms" {
+#   role       = aws_iam_role.firehose.name
+#   policy_arn = aws_iam_policy.firehose_kms_policy.arn
+# }
+resource "aws_iam_role_policy_attachment" "firehose_cloudwatch" {
   role       = aws_iam_role.firehose.name
-  policy_arn = aws_iam_policy.subscritpions_firehose_kms_policy.arn
+  policy_arn = aws_iam_policy.firehose_cloudwatch_policy.arn
 }
-resource "aws_iam_role_policy_attachment" "subscriptions_firehose_cloudwatch" {
-  role       = aws_iam_role.firehose.name
-  policy_arn = aws_iam_policy.subscriptions_firehose_cloudwatch_policy.arn
-}
+
+# TODO(Add VPC Link to Firehose)

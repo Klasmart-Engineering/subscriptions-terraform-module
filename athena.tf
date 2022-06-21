@@ -1,18 +1,24 @@
 resource "aws_athena_workgroup" "athena" {
   name = "${local.name_prefix}-subscriptions-athena"
-
-  configuration {
-    result_configuration {
-      encryption_configuration {
-        encryption_option = "SSE_KMS"
-        kms_key_arn       = aws_kms_key.athena.arn
-      }
+  #   configuration {
+  #     result_configuration {
+  #       encryption_configuration {
+  #         encryption_option = "SSE_KMS"
+  #         kms_key_arn       = aws_kms_key.athena.arn
+  #       }
+  #     }
+  #   }
+  tags = merge(
+    local.tags,
+    {
+      Name           = "${local.name_prefix}-subscriptions-athena"
+      RESOURCE_GROUP = "Data"
     }
-  }
+  )
 }
 
 resource "aws_athena_database" "athena" {
-  name   = "users"
+  name   = "subscriptions_api_usage"
   bucket = aws_s3_bucket.athena.id
 }
 

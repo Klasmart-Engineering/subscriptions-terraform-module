@@ -162,11 +162,11 @@ variable "aws_target_external_id" {
 variable "subscriptions_firehose_s3_prefix" {
   description = "S3 prefix for data sent from firehose"
   type        = string
-  default     = "datalake/events/subscriptions/raw_data/year=!{timestamp:yyyy}/mon=!{timestamp:MM}/date=!{timestamp:dd}/hour=!{timestamp:HH}/"
+  default     = "!{partitionKeyFromQuery:SubscriptionId}/!{timestamp:yyyy}/!{timestamp:mm}/!{timestamp:dd}/"
 }
 
 variable "subscriptions_error_output_prefix" {
   description = "S3 error prefix for data sent from firehose"
   type        = string
-  default     = "datalake/events/subscriptions/errors/"
+  default     = "errors/!{partitionKeyFromQuery:SubscriptionId}/!{timestamp:yyyy}/!{timestamp:mm}/!{timestamp:dd}/"
 }

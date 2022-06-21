@@ -159,11 +159,6 @@ variable "aws_target_external_id" {
   type        = string
 }
 
-variable "logs_bucket_id" {
-  description = "ID of logs bucket"
-  type        = string
-}
-
 variable "subscriptions_firehose_s3_prefix" {
   description = "S3 prefix for data sent from firehose"
   type        = string

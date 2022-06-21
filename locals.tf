@@ -40,4 +40,7 @@ locals {
   cluster_endpoint                      = local.dep_cluster.cluster_endpoint
   cluster_id                            = local.dep_cluster.cluster_id
   kubeconfig_certificate_authority_data = local.dep_cluster.kubeconfig_certificate_authority_data
+
+  # logging
+  logs_bucket_id = local.dep_account.logs_bucket_id
 }

@@ -33,7 +33,7 @@ resource "aws_kinesis_firehose_delivery_stream" "stream" {
     error_output_prefix = var.api_usage_error_output_prefix
 
     # https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning.html
-    buffer_size        = 5
+    buffer_size        = 64
     buffer_interval    = 600
     compression_format = "GZIP"
     # kms_key_arn        = aws_kms_key.firehose.arn

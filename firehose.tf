@@ -62,7 +62,7 @@ resource "aws_kinesis_firehose_delivery_stream" "stream" {
     local.tags,
     {
       Name           = "${local.name_prefix}-api-usage"
-      RESOURCE_GROUP = "EventStream"
+      RESOURCE_GROUP = "Data"
     }
   )
 }
@@ -201,3 +201,4 @@ resource "aws_iam_role_policy_attachment" "firehose_cloudwatch" {
 }
 
 # TODO(Add VPC Link to Firehose)
+# TODO(Separate core infrastructure to separate module/service)

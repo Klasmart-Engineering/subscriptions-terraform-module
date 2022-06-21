@@ -28,3 +28,8 @@ resource "aws_iam_role" "service_account" {
     }
   )
 }
+
+resource "aws_iam_role_policy_attachment" "subscriptions_athena_queries" {
+  role       = aws_iam_role.service_account.name
+  policy_arn = aws_iam_policy.subscriptions_athena_queries_policy.arn
+}

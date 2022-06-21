@@ -158,3 +158,20 @@ variable "aws_target_external_id" {
   description = "AWS Provider details, coming from Terraform Variable set"
   type        = string
 }
+
+variable "logs_bucket_id" {
+  description = "ID of logs bucket"
+  type        = string
+}
+
+variable "subscriptions_firehose_s3_prefix" {
+  description = "S3 prefix for data sent from firehose"
+  type        = string
+  default     = "datalake/events/subscriptions/raw_data/year=!{timestamp:yyyy}/mon=!{timestamp:MM}/date=!{timestamp:dd}/hour=!{timestamp:HH}/"
+}
+
+variable "subscriptions_error_output_prefix" {
+  description = "S3 error prefix for data sent from firehose"
+  type        = string
+  default     = "datalake/events/subscriptions/errors/"
+}

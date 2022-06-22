@@ -98,7 +98,7 @@ resource "kubernetes_manifest" "kidsloop_net-egress-service-entry" {
     "apiVersion" = "networking.istio.io/v1beta1"
     "kind"       = "ServiceEntry"
     "metadata" = {
-      "name"      = "subscriptions-athena"
+      "name"      = "kidsloop_net"
       "namespace" = "istio-system"
     }
     "spec" = {

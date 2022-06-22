@@ -1,18 +1,17 @@
-resource "aws_cloudwatch_log_group" "subscriptions_log_group" {
-  name = "${local.name_prefix}-subscriptions-delivery-stream"
+resource "aws_cloudwatch_log_group" "api_usage_log_group" {
+  name = "${local.name_prefix}-api-usage-delivery-stream"
   tags = merge(
     local.tags,
     {
-      Name           = "${local.name_prefix}-subscriptions-firehose-stream"
+      Name           = "${local.name_prefix}-api-usage-firehose-stream"
       RESOURCE_GROUP = "Monitoring"
     }
   )
 }
 
-
-resource "aws_cloudwatch_log_stream" "subscriptions_log_group_stream" {
+resource "aws_cloudwatch_log_stream" "api_usage_log_group_stream" {
   name           = "ERROR_LOG"
-  log_group_name = aws_cloudwatch_log_group.subscriptions_log_group.name
+  log_group_name = aws_cloudwatch_log_group.api_usage_log_group.name
 }
 
 
@@ -171,7 +170,7 @@ resource "aws_iam_policy" "firehose_cloudwatch_policy" {
 }
 
 resource "aws_iam_role" "firehose" {
-  name = "${local.name_prefix}-subscriptions-s3-firehose"
+  name = "${local.name_prefix}-api-usage-s3-firehose"
 
   assume_role_policy = <<EOF
 {
@@ -192,7 +191,7 @@ EOF
   tags = merge(
     local.tags,
     {
-      Name           = "${local.name_prefix}-subscriptions-s3-firehose"
+      Name           = "${local.name_prefix}-api-usage-s3-firehose"
       RESOURCE_GROUP = "IAM"
     }
   )

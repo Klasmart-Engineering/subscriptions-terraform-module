@@ -93,14 +93,27 @@ resource "kubernetes_manifest" "athena-istio-egress-service-entry" {
   }
 }
 
-# This should go in the chart..
-resource "kubernetes_service_account" "microgateway_sa" {
-  metadata {
-    name      = var.service_account_microgateway_name
-    namespace = var.namespace
-
-    annotations = {
-      "eks.amazonaws.com/role-arn" = aws_iam_role.microgateway_service_account.arn
+resource "kubernetes_manifest" "kidsloop_net-egress-service-entry" {
+  manifest = {
+    "apiVersion" = "networking.istio.io/v1beta1"
+    "kind"       = "ServiceEntry"
+    "metadata" = {
+      "name"      = "subscriptions-athena"
+      "namespace" = "istio-system"
+    }
+    "spec" = {
+      "hosts" = [
+        "kidsloop.net",
+      ]
+      "location" = "MESH_EXTERNAL"
+      "ports" = [
+        {
+          "name"     = "https",
+          "number"   = 443
+          "protocol" = "TLS"
+        }
+      ]
+      "resolution" = "DNS"
     }
   }
 }

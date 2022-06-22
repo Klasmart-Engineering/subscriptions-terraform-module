@@ -138,6 +138,12 @@ variable "service_account_name" {
   default     = "subscriptions-sa"
 }
 
+variable "service_account_microgateway_name" {
+  description = "microgateway service account name in Kubernetes"
+  type        = string
+  default     = "subscriptions-microgateway"
+}
+
 variable "namespace" {
   description = "The kubernetes namespace for the product offering"
   type        = string

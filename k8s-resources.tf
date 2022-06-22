@@ -42,3 +42,53 @@ resource "kubernetes_manifest" "db-istio-egress-service-entry" {
     }
   }
 }
+
+resource "kubernetes_manifest" "firehose-istio-egress-service-entry" {
+  manifest = {
+    "apiVersion" = "networking.istio.io/v1beta1"
+    "kind"       = "ServiceEntry"
+    "metadata" = {
+      "name"      = "api-usage-firehose"
+      "namespace" = "istio-system"
+    }
+    "spec" = {
+      "hosts" = [
+        "firehose.${var.region}.amazonaws.com",
+      ]
+      "location" = "MESH_EXTERNAL"
+      "ports" = [
+        {
+          "name"     = "https",
+          "number"   = 443
+          "protocol" = "TLS"
+        }
+      ]
+      "resolution" = "DNS"
+    }
+  }
+}
+
+resource "kubernetes_manifest" "athena-istio-egress-service-entry" {
+  manifest = {
+    "apiVersion" = "networking.istio.io/v1beta1"
+    "kind"       = "ServiceEntry"
+    "metadata" = {
+      "name"      = "subscriptions-athena"
+      "namespace" = "istio-system"
+    }
+    "spec" = {
+      "hosts" = [
+        "athena.${var.region}.amazonaws.com",
+      ]
+      "location" = "MESH_EXTERNAL"
+      "ports" = [
+        {
+          "name"     = "https",
+          "number"   = 443
+          "protocol" = "TLS"
+        }
+      ]
+      "resolution" = "DNS"
+    }
+  }
+}

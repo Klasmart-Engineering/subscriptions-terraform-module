@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_log_group" "api_usage_log_group" {
-  name = "${local.name_prefix}-api-usage-delivery-stream"
+  name = "${local.name_prefix}-api-usage-firehose-stream"
   tags = merge(
     local.tags,
     {
@@ -155,7 +155,7 @@ resource "aws_iam_policy" "firehose_cloudwatch_policy" {
         "Action" : [
           "Logs:PutLogEvents",
         ],
-        "Resource" : "arn:aws:logs::log-group:${local.name_prefix}-api-usage-delivery-stream:*"
+        "Resource" : "arn:aws:logs::log-group:${local.name_prefix}-api-usage-firehose-stream:*"
       }
     ]
   })

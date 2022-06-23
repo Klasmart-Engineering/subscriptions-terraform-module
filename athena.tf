@@ -47,45 +47,29 @@ resource "aws_iam_policy" "subscriptions_athena_queries_policy" {
           "Resource" : [
             aws_athena_workgroup.athena.arn
           ]
-        }
-    ] }
+        },
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "s3:GetObject",
+            "s3:PutObject",
+            "s3:ListBucketMultipartUploads",
+            "s3:ListMultipartUploadParts",
+            "s3:AbortMultipartUpload",
+            "s3:GetBucketLocation",
+          ],
+          "Resource" : [
+            aws_s3_bucket.athena.arn,
+            "${aws_s3_bucket.athena.arn}/*"
+          ]
+      }]
+    }
   )
 
   tags = merge(
     local.tags,
     {
       Name           = "${local.name_prefix}-subscriptions-athena-queries-policy"
-      RESOURCE_GROUP = "IAM"
-    }
-  )
-}
-
-resource "aws_iam_policy" "athena-s3-output" {
-  name = "${local.name_prefix}-athena-s3-output"
-  policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucketMultipartUploads",
-          "s3:ListMultipartUploadParts",
-          "s3:AbortMultipartUpload",
-          "s3:GetBucketLocation",
-        ],
-        "Resource" : [
-          "${aws_s3_bucket.athena.arn}",
-          "${aws_s3_bucket.athena.arn}/*"
-        ]
-      }
-    ]
-  })
-  tags = merge(
-    local.tags,
-    {
-      Name           = "${local.name_prefix}-athena-s3-output"
       RESOURCE_GROUP = "IAM"
     }
   )

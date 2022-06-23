@@ -37,6 +37,7 @@ resource "aws_iam_policy" "subscriptions_athena_queries_policy" {
           "Action" : [
             "athena:GetQueryExecution",
             "athena:StartQueryExecution",
+            "athena:GetQueryResults",
           ],
           "Resource" : [
             aws_athena_workgroup.athena.arn

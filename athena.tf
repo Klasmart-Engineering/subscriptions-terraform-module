@@ -24,14 +24,6 @@ resource "aws_athena_database" "athena" {
   bucket = aws_s3_bucket.athena.id
 }
 
-resource "aws_athena_named_query" "foo" {
-  name      = "bar"
-  workgroup = aws_athena_workgroup.athena.id
-  database  = aws_athena_database.athena.name
-  query     = "SELECT * FROM ${aws_athena_database.athena.name} limit 10;"
-}
-
-
 resource "aws_iam_policy" "subscriptions_athena_queries_policy" {
 
   name = "${local.name_prefix}-subscriptions-athena-queries-policy"
@@ -81,6 +73,8 @@ resource "aws_iam_policy" "subscriptions_athena_queries_policy" {
           "Resource" : [
             "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:database/${aws_athena_database.athena.id}",
             "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:database/default",
+            "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:catalog",
+            "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:table/${aws_athena_database.athena.id}/*",
           ]
         },
       ]

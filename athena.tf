@@ -41,37 +41,8 @@ resource "aws_iam_policy" "subscriptions_athena_queries_policy" {
         {
           "Effect" : "Allow",
           "Action" : [
-            "athena:ListEngineVersions",
-            "athena:ListWorkGroups",
-            "athena:ListDataCatalogs",
-            "athena:ListDatabases",
-            "athena:GetDatabase",
-            "athena:ListTableMetadata",
-            "athena:GetTableMetadata"
-          ],
-          "Resource" : "*"
-        },
-        {
-          "Effect" : "Allow",
-          "Action" : [
-            "athena:GetWorkGroup",
-            "athena:BatchGetQueryExecution",
             "athena:GetQueryExecution",
-            "athena:ListQueryExecutions",
             "athena:StartQueryExecution",
-            "athena:StopQueryExecution",
-            "athena:GetQueryResults",
-            "athena:GetQueryResultsStream",
-            "athena:CreateNamedQuery",
-            "athena:GetNamedQuery",
-            "athena:BatchGetNamedQuery",
-            "athena:ListNamedQueries",
-            "athena:DeleteNamedQuery",
-            "athena:CreatePreparedStatement",
-            "athena:GetPreparedStatement",
-            "athena:ListPreparedStatements",
-            "athena:UpdatePreparedStatement",
-            "athena:DeletePreparedStatement"
           ],
           "Resource" : [
             aws_athena_workgroup.athena.arn
@@ -84,6 +55,33 @@ resource "aws_iam_policy" "subscriptions_athena_queries_policy" {
     local.tags,
     {
       Name           = "${local.name_prefix}-subscriptions-athena-queries-policy"
+      RESOURCE_GROUP = "IAM"
+    }
+  )
+}
+
+resource "aws_iam_policy" "athena-s3-output" {
+  name = "${local.name_prefix}-athena-s3-output"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:GetObject",
+          "s3:PutObject"
+        ],
+        "Resource" : [
+          "${aws_s3_bucket.athena.arn}",
+          "${aws_s3_bucket.athena.arn}/*"
+        ]
+      }
+    ]
+  })
+  tags = merge(
+    local.tags,
+    {
+      Name           = "${local.name_prefix}-athena-s3-output"
       RESOURCE_GROUP = "IAM"
     }
   )

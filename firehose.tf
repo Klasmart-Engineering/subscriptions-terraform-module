@@ -212,3 +212,32 @@ resource "aws_iam_role_policy_attachment" "firehose_cloudwatch" {
 
 # TODO(Add VPC Link to Firehose)
 # TODO(Separate core infrastructure to separate module/service)
+
+resource "aws_iam_policy" "firehose-s3-output" {
+  name = "${local.name_prefix}-firehose-s3-output"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:PutObject",
+          "s3:DeleteObject",
+        ],
+        "Resource" : [
+          "${aws_s3_bucket.firehose.arn}",
+          "${aws_s3_bucket.firehose.arn}/*"
+        ]
+      }
+    ]
+  })
+  tags = merge(
+    local.tags,
+    {
+      Name           = "${local.name_prefix}-firehose-s3-output"
+      RESOURCE_GROUP = "IAM"
+    }
+  )
+}

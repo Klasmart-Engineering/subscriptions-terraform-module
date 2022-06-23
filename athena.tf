@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_athena_workgroup" "athena" {
   name = "${local.name_prefix}-subscriptions-athena"
   #   configuration {
@@ -62,7 +64,26 @@ resource "aws_iam_policy" "subscriptions_athena_queries_policy" {
             aws_s3_bucket.athena.arn,
             "${aws_s3_bucket.athena.arn}/*"
           ]
-      }]
+        },
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "glue:GetDatabase",
+            "glue:CreateTable",
+            "glue:GetTable",
+            "glue:GetTables",
+            "glue:CreatePartition",
+            "glue:UpdatePartition",
+            "glue:GetPartition",
+            "glue:GetPartitions",
+            "glue:BatchGetPartition",
+          ],
+          "Resource" : [
+            "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:database/${aws_athena_database.athena.id}",
+            "arn:aws:glue:${var.region}:${data.aws_caller_identity.current.account_id}:database/default",
+          ]
+        },
+      ]
     }
   )
 

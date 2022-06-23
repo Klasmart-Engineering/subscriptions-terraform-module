@@ -14,6 +14,7 @@ resource "kubernetes_secret" "outputs" {
     application_aws_iam_role_arn  = aws_iam_role.microgateway_service_account.arn
     microgateway_aws_iam_role_arn = aws_iam_role.service_account.arn
     athena_workgroup              = aws_athena_workgroup.athena.id
+    athena_database               = aws_athena_database.athena.id
   }
 }
 

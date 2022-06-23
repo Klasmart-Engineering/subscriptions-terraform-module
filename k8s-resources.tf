@@ -117,3 +117,27 @@ resource "kubernetes_manifest" "kidsloop_net-egress-service-entry" {
     }
   }
 }
+
+resource "kubernetes_annotations" "application-service-account" {
+  api_version = "v1"
+  kind        = "ServiceAccount"
+  metadata {
+    name      = var.service_account_name
+    namespace = var.namespace
+  }
+  annotations = {
+    "eks.amazonaws.com/role-arn" = aws_iam_role.service_account.arn
+  }
+}
+
+resource "kubernetes_annotations" "microgateway-firehose-sa" {
+  api_version = "v1"
+  kind        = "ServiceAccount"
+  metadata {
+    name      = var.service_account_microgateway_name
+    namespace = var.namespace
+  }
+  annotations = {
+    "eks.amazonaws.com/role-arn" = aws_iam_role.microgateway_service_account.arn
+  }
+}

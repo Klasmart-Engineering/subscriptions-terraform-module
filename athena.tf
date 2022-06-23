@@ -69,7 +69,11 @@ resource "aws_iam_policy" "athena-s3-output" {
         "Effect" : "Allow",
         "Action" : [
           "s3:GetObject",
-          "s3:PutObject"
+          "s3:PutObject",
+          "s3:ListBucketMultipartUploads",
+          "s3:ListMultipartUploadParts",
+          "s3:AbortMultipartUpload",
+          "s3:GetBucketLocation",
         ],
         "Resource" : [
           "${aws_s3_bucket.athena.arn}",

@@ -66,6 +66,9 @@ resource "aws_kinesis_firehose_delivery_stream" "stream" {
           parameter_value = "{SubscriptionId:.subscription_id}"
         }
       }
+      processors {
+        type = "AppendDelimiterToRecord"
+      }
     }
   }
   tags = merge(

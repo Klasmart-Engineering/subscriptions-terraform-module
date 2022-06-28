@@ -15,13 +15,13 @@ resource "kubernetes_secret" "outputs" {
     microgateway_aws_iam_role_arn = aws_iam_role.service_account.arn
     athena_workgroup              = aws_athena_workgroup.athena.id
     athena_database               = aws_athena_database.athena.id
-    db_master_usename             = data.kubernetes_secret.core-db-secret.data.username
+    db_master_username            = data.kubernetes_secret.core-db-secret.data.username
     db_master_password            = data.kubernetes_secret.core-db-secret.data.password
     db_master_name                = data.kubernetes_secret.core-db-secret.data.db_name
-    db_username                   = var.db_usename
-    db_password                   = random_password.db_password.result
     db_hostname                   = data.kubernetes_secret.core-db-secret.data.hostname
-    db_logical_name               = var.db_usename
+    db_username                   = var.db_username
+    db_password                   = random_password.db_password.result
+    db_logical_name               = var.db_username
   }
 }
 

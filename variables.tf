@@ -179,6 +179,6 @@ variable "api_usage_error_output_prefix" {
 
 variable "db_usename" {
   description = "Database username"
-  type = string
-  default = "subscriptions"
+  type        = string
+  default     = "subscriptions"
 }

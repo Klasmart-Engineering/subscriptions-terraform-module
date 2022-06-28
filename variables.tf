@@ -176,3 +176,9 @@ variable "api_usage_error_output_prefix" {
   type        = string
   default     = "firehose/events/api-usage/errors/"
 }
+
+variable "db_usename" {
+  description = "Database username"
+  type = string
+  default = "subscriptions"
+}
